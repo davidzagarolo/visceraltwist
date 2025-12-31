@@ -26,8 +26,21 @@ export default function Sun({ className }: SunProps) {
         className={className}  
         style={{ offsetPath: `path("${path}")`, offsetRotate: "0deg", }}
         initial={{ opacity: 0 }}
-        animate={{ offsetDistance: ["0%", "100%"], opacity: [1, 1, 1, 1], }}
-        transition={{ duration: TRAVEL_DURATION, ease: "linear", repeat: Infinity, repeatDelay: CYCLE_DURATION - TRAVEL_DURATION, }}
+        animate={{ offsetDistance: ["0%", "100%"], opacity: [1, 1, 0, 0], }}
+        transition={{
+            offsetDistance: {
+                duration: TRAVEL_DURATION, 
+                ease: "linear", 
+                repeat: Infinity, 
+                repeatDelay: CYCLE_DURATION - TRAVEL_DURATION
+            },
+            opacity: {
+                duration: CYCLE_DURATION,
+                ease: "linear",
+                repeat: Infinity,
+                times: [0, 0.5, 0.5, 1]
+            }
+        }}
         >
             <svg viewBox="0 0 200 200" width="200" height="200" overflow="visible" xmlns="http://www.w3.org/2000/svg">
               <defs>
