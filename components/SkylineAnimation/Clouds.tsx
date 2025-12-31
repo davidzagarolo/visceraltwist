@@ -1,18 +1,27 @@
 // components/SkylineAnimation/Clouds.tsx
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 interface CloudsProps {
   isNight: boolean;
 }
 
 export default function Clouds({ isNight }: CloudsProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize(); // initial check
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [])
+
   const wrapperStyle: React.CSSProperties = {
     position: "absolute",
-    top: 0,
+    top: isMobile ? "20%" : "10%",
     left: 0,
-    width: "100%",
-    height: "100%",
+    width: isMobile ? "150vw" : "100vw",
+    height: isMobile ? "700px" : "920px",
     pointerEvents: "none",
     opacity: isNight ? 0 : 1,
     transition: "opacity 6s ease-in-out"
