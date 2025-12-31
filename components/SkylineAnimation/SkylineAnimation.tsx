@@ -26,7 +26,7 @@ export default function SkylineAnimation() {
             <Moon className="absolute left-0 top-0" />      
             <Clouds isNight={isNight} />
             <div className="absolute bottom-0 right-0 h-screen w-auto">
-                { /* <Skyline className="h-full w-auto object-cover" /> */ }
+                <Skyline />
             </div> 
         </div>
     );
