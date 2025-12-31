@@ -33,7 +33,7 @@ export default function Navbar() {
   return (
     <header
     className={`fixed top-0 left-0 w-full z-50 transition-colors duration-1000 ${
-      scrolled ? "bg-black bg-opacity-90 shadow-md" : "bg-transparent"
+      scrolled ? "bg-black border-b border-neutral-200 bg-opacity-90 shadow-md" : "bg-transparent"
     }`}
     >
     <nav className="flex items-center justify-between px-8 md:px-20 py-4">
@@ -68,7 +68,7 @@ export default function Navbar() {
 
         <div
         ref={menuRef}
-        className={`fixed top-0 left-0 h-full w-72 bg-black text-white shadow-lg transform transition-transform duration-300 ${
+        className={`fixed top-0 left-0 h-full w-72 bg-black border-r border-neutral-200 text-white shadow-lg transform transition-transform duration-300 ${
             menuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         >
