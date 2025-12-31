@@ -21,10 +21,10 @@ export default function SkylineAnimation() {
     return (
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
             <Sky />
-            <Stars isVisible={isNight} />
+            <Stars isVisible={isNight} fadeDuration={2000} count={150} />
             <Sun className="absolute left-0 top-0" />
             <Moon className="absolute left-0 top-0" />            
-            <Clouds />
+            <Clouds isNight={isNight} />
             <div className="absolute bottom-0 right-0 h-screen w-auto">
                 <Skyline className="h-full w-auto object-cover" />
             </div> 

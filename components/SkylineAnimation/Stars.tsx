@@ -1,54 +1,105 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef } from "react";
 
-interface StarsProps {
+interface StarfieldProps {
+  isVisible: boolean; // Night cycle flag
   count?: number;
-  isVisible: boolean;
+  fadeDuration?: number; // in milliseconds
 }
 
-type Star = { left: number; top: number; size: number; opacity: number };
+interface Star {
+  x: number;
+  y: number;
+  radius: number;
+  alpha: number;
+  twinkleSpeed: number;
+}
 
-export default function Stars({ count = 100, isVisible }: StarsProps) {
-  const [stars, setStars] = useState<Star[]>([]);
+export default function Starfield({
+  isVisible,
+  count = 100,
+  fadeDuration = 1000,
+}: StarfieldProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const starsRef = useRef<Star[]>([]);
+  const animationRef = useRef<number | null>(null);
+  const opacityRef = useRef<number>(0); // tracks fade-in/out opacity
 
+  // Generate stars once
   useEffect(() => {
-    let rafId: number | null = null;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    if (!isVisible) {
-      rafId = requestAnimationFrame(() => setStars([]));
-      return () => { if (rafId) cancelAnimationFrame(rafId); };
+    const width = canvas.offsetWidth;
+    const height = canvas.offsetHeight;
+
+    starsRef.current = Array.from({ length: count }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: Math.random() * 2 + 1,
+      alpha: Math.random(),
+      twinkleSpeed: Math.random() * 0.02 + 0.005,
+    }));
+  }, [count]);
+
+  // Draw loop
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let lastTime = performance.now();
+
+    const draw = (time: number) => {
+      const width = canvas.offsetWidth;
+      const height = canvas.offsetHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      // Smooth fade-in/out
+      const delta = time - lastTime;
+      lastTime = time;
+
+      if (isVisible) {
+        opacityRef.current += delta / fadeDuration;
+        if (opacityRef.current > 1) opacityRef.current = 1;
+      } else {
+        opacityRef.current -= delta / fadeDuration;
+        if (opacityRef.current < 0) opacityRef.current = 0;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      starsRef.current.forEach((star) => {
+        // Twinkle logic
+        star.alpha += star.twinkleSpeed;
+        if (star.alpha > 1) star.alpha = 0;
+
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha * opacityRef.current})`;
+        ctx.fill();
+      });
+
+      animationRef.current = requestAnimationFrame(draw);
+    };
+
+    // Only start animation if not already running
+    if (!animationRef.current) {
+      animationRef.current = requestAnimationFrame(draw);
     }
 
-    const newStars = Array.from({ length: count }, () => ({
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      size: Math.random() * 2 + 1,
-      opacity: Math.random() * 0.8 + 0.2,
-    }));
-
-    rafId = requestAnimationFrame(() => setStars(newStars));
-    return () => { if (rafId) cancelAnimationFrame(rafId); };
-  }, [count, isVisible]);
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    };
+  }, [isVisible, fadeDuration]);
 
   return (
-    <>
-      {stars.map((star, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full bg-white animate-pulse"
-          style={{
-            left: `${star.left}%`,
-            top: `${star.top}%`,
-            width: `${star.size}px`,
-            height: `${star.size}px`,
-            opacity: star.opacity,
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isVisible ? star.opacity : 0 }}
-          transition={{ duration: 2 }}
-        />
-      ))}
-    </>
+    <canvas
+      ref={canvasRef}
+      className="absolute top-0 left-0 w-full h-full pointer-events-none"
+    />
   );
 }

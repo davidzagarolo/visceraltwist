@@ -4,7 +4,6 @@ html {
   scroll-behavior: smooth;
 }
 
-
 body {
   font-family: inherit;
 }
@@ -21,3 +20,29 @@ h6 {
 .text-shadow {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
+
+.cloud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateX(-40%);
+  animation-name: cloud-move;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards;
+}
+
+.cloud1 { animation-duration: 40s; }
+.cloud2 { animation-duration: 60s; }
+
+@keyframes cloud-move {
+  0% { transform: translateX(-40%); }
+  100% { transform: translateX(120vw); }
+}
+
+@media (max-width: 768px) {
+  .cloud1 { animation-duration: 80s; }
+  .cloud2 { animation-duration: 120s; }
+}
+
+

@@ -14,7 +14,7 @@ export default function HomePage() {
       </header>
       <div className="relative min-h-screen">
         <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        { /*   <SkylineAnimation /> */ }
+          <SkylineAnimation />
         </div>
         <div className="relative inset-0 z-10">
           <Hero />
